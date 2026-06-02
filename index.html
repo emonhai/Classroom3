@@ -83,32 +83,31 @@
             }
         });
 
-        // 2. Local File Loading Mechanics
+        // 2. Chromebook-Optimized Local File Loading
         document.getElementById('rom-file').addEventListener('change', function(event) {
             const file = event.target.files[0];
             if (!file) return;
 
-            // Creates an instant local memory reference pointer (No base64 string conversion lag)
+            // Instantly references file in RAM to stop Chrome from killing the tab
             const romObjectURL = URL.createObjectURL(file);
             
-            // Hide setup UI and expose emulator container
+            // UI Transition
             document.getElementById('setup-container').classList.add('hidden');
             document.getElementById('emulator-inside').style.display = 'block';
             
-            // Initialize EmulatorJS variables globally
+            // Global EmulatorJS Configurations
             window.EJS_player = '#game';
-            window.EJS_core = 'nds'; // Targets modern NDS WASM core
+            window.EJS_core = 'nds'; 
             window.EJS_gameUrl = romObjectURL; 
             
-            // Stable CDN GitHack data mirror
+            // Chromebook Optimization: Threads help stop lag/freezes on ChromeOS
+            window.EJS_threads = true;
+            
+            // Correct EmulatorJS BIOS and Assets paths
             window.EJS_pathtodata = 'https://rawcdn.githack.com/EmulatorJS/EmulatorJS/main/data/';                
-            
-            // Direct BIOS system file linking to bypass Pokemon anti-piracy checks/white screens
-            window.EJS_bios_firmware = 'https://rawcdn.githack.com/EmulatorJS/EmulatorJS/main/data/bios/bios7.bin';
-            window.EJS_bios_d7 = 'https://rawcdn.githack.com/EmulatorJS/EmulatorJS/main/data/bios/bios9.bin';
-            window.EJS_bios_d9 = 'https://rawcdn.githack.com/EmulatorJS/EmulatorJS/main/data/bios/firmware.bin';
-            
-            // Inject the loader engine
+            window.EJS_biosUrl = 'https://rawcdn.githack.com/EmulatorJS/EmulatorJS/main/data/system/nds.zip'; 
+
+            // Script injector
             const script = document.createElement('script');
             script.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
             document.body.appendChild(script);

@@ -83,12 +83,12 @@
             }
         });
 
-        // 2. Optimized Local File Loading Mechanics
+        // 2. Local File Loading Mechanics
         document.getElementById('rom-file').addEventListener('change', function(event) {
             const file = event.target.files[0];
             if (!file) return;
 
-            // Instantly creates a light memory pointer instead of reading the whole file into a string
+            // Creates an instant local memory reference pointer (No base64 string conversion lag)
             const romObjectURL = URL.createObjectURL(file);
             
             // Hide setup UI and expose emulator container
@@ -97,12 +97,18 @@
             
             // Initialize EmulatorJS variables globally
             window.EJS_player = '#game';
-            window.EJS_core = 'nds'; 
-            window.EJS_gameUrl = romObjectURL; // Passes the efficient object URL
+            window.EJS_core = 'nds'; // Targets modern NDS WASM core
+            window.EJS_gameUrl = romObjectURL; 
             
-            // Stable CDN deployment assets
+            // Stable CDN GitHack data mirror
             window.EJS_pathtodata = 'https://rawcdn.githack.com/EmulatorJS/EmulatorJS/main/data/';                
             
+            // Direct BIOS system file linking to bypass Pokemon anti-piracy checks/white screens
+            window.EJS_bios_firmware = 'https://rawcdn.githack.com/EmulatorJS/EmulatorJS/main/data/bios/bios7.bin';
+            window.EJS_bios_d7 = 'https://rawcdn.githack.com/EmulatorJS/EmulatorJS/main/data/bios/bios9.bin';
+            window.EJS_bios_d9 = 'https://rawcdn.githack.com/EmulatorJS/EmulatorJS/main/data/bios/firmware.bin';
+            
+            // Inject the loader engine
             const script = document.createElement('script');
             script.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
             document.body.appendChild(script);

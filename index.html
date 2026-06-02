@@ -63,12 +63,12 @@
     <div id="setup-container">
         <h1>Workspace Engine</h1>
         <p style="color: #5f6368; font-size: 14px; margin-bottom: 25px;">
-            Select a localized environment file (.sfc, .smc, .zip) to initialize the workspace player.
+            Select a localized environment file (.nds, .dsi, .zip) to initialize the workspace player.
         </p>
         <label class="file-input-label" for="rom-file">
             Load Local File
         </label>
-        <input type="file" id="rom-file" accept=".sfc,.smc,.zip">
+        <input type="file" id="rom-file" accept=".nds,.dsi,.zip">
     </div>
 
     <div id="emulator-inside">
@@ -101,7 +101,7 @@
                 
                 // Initialize EmulatorJS variables globally
                 window.EJS_player = '#game';
-                window.EJS_core = 'snes'; // Targets the Super Nintendo core engine
+                window.EJS_core = 'ds'; // Targets the DS core engine
                 window.EJS_gameUrl = romDataUrl; // Passes the client-side data locally
                 
                 // Fetch the CDN deployment scripts for the structural engine

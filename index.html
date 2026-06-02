@@ -77,42 +77,35 @@
 
     <script>
         // 1. Emergency Panic Switch Logic
-        // Pressing the tilde key (~) immediately replaces the window destination
         document.addEventListener('keydown', function(event) {
             if (event.key === '~') {
                 window.location.replace('https://classroom.google.com');
             }
         });
 
-        // 2. Local File Loading Mechanics
+        // 2. Optimized Local File Loading Mechanics
         document.getElementById('rom-file').addEventListener('change', function(event) {
             const file = event.target.files[0];
             if (!file) return;
 
-            const reader = new FileReader();
+            // Instantly creates a light memory pointer instead of reading the whole file into a string
+            const romObjectURL = URL.createObjectURL(file);
             
-            // Read the file structure into a temporary local data URL
-            reader.onload = function(e) {
-                const romDataUrl = e.target.result;
-                
-                // Hide setup UI and expose emulator container
-                document.getElementById('setup-container').classList.add('hidden');
-                document.getElementById('emulator-inside').style.display = 'block';
-                
-                // Initialize EmulatorJS variables globally
-                window.EJS_player = '#game';
-                window.EJS_core = 'ds'; // Targets the DS core engine
-                window.EJS_gameUrl = romDataUrl; // Passes the client-side data locally
-                
-                // Fetch the CDN deployment scripts for the structural engine
-                window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
-                
-                const script = document.createElement('script');
-                script.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
-                document.body.appendChild(script);
-            };
-
-            reader.readAsDataURL(file);
+            // Hide setup UI and expose emulator container
+            document.getElementById('setup-container').classList.add('hidden');
+            document.getElementById('emulator-inside').style.display = 'block';
+            
+            // Initialize EmulatorJS variables globally
+            window.EJS_player = '#game';
+            window.EJS_core = 'nds'; 
+            window.EJS_gameUrl = romObjectURL; // Passes the efficient object URL
+            
+            // Stable CDN deployment assets
+            window.EJS_pathtodata = 'https://rawcdn.githack.com/EmulatorJS/EmulatorJS/main/data/';                
+            
+            const script = document.createElement('script');
+            script.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
+            document.body.appendChild(script);
         });
     </script>
 </body>

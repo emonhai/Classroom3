@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Docs</title>
+    <link rel="icon" type="image/x-icon" href="https://ssl.gstatic.com/docs/documents/images/kix-favicon-2023q4.ico">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            font-family: 'Roboto', Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        #setup-container {
+            text-align: center;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+        h1 {
+            font-size: 24px;
+            color: #202124;
+            margin-bottom: 20px;
+        }
+        .file-input-label {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #1a73e8;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+        .file-input-label:hover {
+            background-color: #1557b0;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        #emulator-inside {
+            width: 100%;
+            height: 100%;
+            display: none;
+        }
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="setup-container">
+        <h1>Workspace Engine</h1>
+        <p style="color: #5f6368; font-size: 14px; margin-bottom: 25px;">
+            Select a localized environment file (.sfc, .smc, .zip) to initialize the workspace player.
+        </p>
+        <label class="file-input-label" for="rom-file">
+            Load Local File
+        </label>
+        <input type="file" id="rom-file" accept=".sfc,.smc,.zip">
+    </div>
+
+    <div id="emulator-inside">
+        <div style="width:100%; height:100%;" id="game"></div>
+    </div>
+
+    <script>
+        // 1. Emergency Panic Switch Logic
+        // Pressing the tilde key (~) immediately replaces the window destination
+        document.addEventListener('keydown', function(event) {
+            if (event.key === '~') {
+                window.location.replace('https://classroom.google.com');
+            }
+        });
+
+        // 2. Local File Loading Mechanics
+        document.getElementById('rom-file').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            
+            // Read the file structure into a temporary local data URL
+            reader.onload = function(e) {
+                const romDataUrl = e.target.result;
+                
+                // Hide setup UI and expose emulator container
+                document.getElementById('setup-container').classList.add('hidden');
+                document.getElementById('emulator-inside').style.display = 'block';
+                
+                // Initialize EmulatorJS variables globally
+                window.EJS_player = '#game';
+                window.EJS_core = 'snes'; // Targets the Super Nintendo core engine
+                window.EJS_gameUrl = romDataUrl; // Passes the client-side data locally
+                
+                // Fetch the CDN deployment scripts for the structural engine
+                window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
+                
+                const script = document.createElement('script');
+                script.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
+                document.body.appendChild(script);
+            };
+
+            reader.readAsDataURL(file);
+        });
+    </script>
+</body>
+</html>

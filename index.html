@@ -83,35 +83,37 @@
             }
         });
 
-        // 2. Chromebook-Optimized Local File Loading
+        // 2. Local File Loading Mechanics
         document.getElementById('rom-file').addEventListener('change', function(event) {
             const file = event.target.files[0];
             if (!file) return;
 
-            // Instantly references file in RAM to stop Chrome from killing the tab
-            const romObjectURL = URL.createObjectURL(file);
+            const reader = new FileReader();
             
-            // UI Transition
-            document.getElementById('setup-container').classList.add('hidden');
-            document.getElementById('emulator-inside').style.display = 'block';
-            
-            // Global EmulatorJS Configurations
-            window.EJS_player = '#game';
-            window.EJS_core = 'nds'; 
-            window.EJS_gameUrl = romObjectURL; 
-            
-            // Chromebook Optimization: Threads help stop lag/freezes on ChromeOS
-            window.EJS_threads = true;
-            
-            // Correct EmulatorJS BIOS and Assets paths
-            window.EJS_pathtodata = 'https://rawcdn.githack.com/EmulatorJS/EmulatorJS/main/data/';                
-            window.EJS_biosUrl = 'https://rawcdn.githack.com/EmulatorJS/EmulatorJS/main/data/system/nds.zip'; 
+            reader.onload = function(e) {
+                const romDataUrl = e.target.result;
+                
+                document.getElementById('setup-container').classList.add('hidden');
+                document.getElementById('emulator-inside').style.display = 'block';
+                
+                // Initialize EmulatorJS variables globally
+                window.EJS_player = '#game';
+                // CHANGED: Core set to 'nds' to load the Game Boy Advance engine
+                window.EJS_core = 'nds'; 
+                window.EJS_gameUrl = romDataUrl; 
+                
+                window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
+                
+                const script = document.createElement('script');
+                script.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
+                document.body.appendChild(script);
+            };
 
-            // Script injector
-            const script = document.createElement('script');
-            script.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
-            document.body.appendChild(script);
+            reader.readAsDataURL(file);
         });
+    </script>
+</body>
+</html>
     </script>
 </body>
 </html>
